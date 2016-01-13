@@ -27,7 +27,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
 
     private int type;
 
-    private int mPositiontype;
+    private int mPositiontype=TimeLineView.POSITIONTYPE.CENTER;
     /***
      * @return 距离顶部有多远
      */
