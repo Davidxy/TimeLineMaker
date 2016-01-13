@@ -38,5 +38,9 @@
         android:id="@+id/menu_rondom"
         android:title="RANDOM(15DP)"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_another"
+        android:title="another"
+        app:showAsAction="never" />
 
 </menu>

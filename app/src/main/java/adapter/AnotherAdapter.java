@@ -3,6 +3,7 @@ package adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,21 +20,21 @@ import view.TimeLineView;
 /**
  * Created by 洒笑天涯 on 2016/1/10.
  */
-public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHolder> {
+public class AnotherAdapter extends RecyclerView.Adapter<AnotherAdapter.ViewHolder> {
 
     private ArrayList<String> timeLineData;
 
     private Context mContext;
-
-    private int type;
-
-    private int mPositiontype;
+    //之前这里没有赋值,才导致默认绘制的是圆圈
+    private int type= TimeLineView.CENTERTYPE.OTHER;
+    //这里之前也是默认为0
+    private int mPositiontype=TimeLineView.POSITIONTYPE.CENTER;
     /***
      * @return 距离顶部有多远
      */
     private int marginTop;
 
-    public TimeLineAdapter(ArrayList<String> dataList, Context context) {
+    public AnotherAdapter(ArrayList<String> dataList, Context context) {
         this.timeLineData = dataList;
         this.mContext = context;
     }
@@ -51,6 +52,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.v("mine","在createViewHolder这里");
         return new ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.items, parent,false));
     }
 
@@ -59,7 +61,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
         setColors(holder, position);
         isLastorFrist(holder, position);
         holder.timeLineView.setPositiontype(mPositiontype);
-        holder.timeLineView.setMarginTop(25);
+
     }
 
     /***
@@ -67,13 +69,6 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
      */
     private void setColors(ViewHolder holder, int position) {
         holder.tv_name.setText(timeLineData.get(position));
-        if (position % 3 == 0) {
-            holder.timeLineView.setMainColor(Color.RED);
-            holder.timeLineView.setLineColor(Color.RED);
-        } else {
-            holder.timeLineView.setMainColor(Color.BLUE);
-            holder.timeLineView.setLineColor(Color.BLUE);
-        }
     }
 
     /***
@@ -81,13 +76,18 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
      */
     private void isLastorFrist(ViewHolder holder, int position) {
         if (position == 0) {
-            holder.timeLineView.isFrist(true).setCenterType(TimeLineView.CENTERTYPE.RINGCYCLE);
+            holder.timeLineView.isFrist(true).setCenterBmp(R.mipmap.icon_arrow_top).setCenterType(TimeLineView.CENTERTYPE.OTHER);
         }
         if (position == timeLineData.size() - 1) {
-            holder.timeLineView.setIsLast(true).setCenterType(TimeLineView.CENTERTYPE.RINGCYCLE);
+            holder.timeLineView.setIsLast(true).setCenterBmp(R.mipmap.icon_arrow_bottom).setCenterType(TimeLineView.CENTERTYPE.OTHER);
         }
         if (position != 0 && position != timeLineData.size() - 1) {
             holder.timeLineView.setIsLast(false).isFrist(false).setCenterType(type);
+            if (type == TimeLineView.CENTERTYPE.OTHER) {
+                holder.timeLineView.setCenterBmp(R.mipmap.icon_center);
+            } else {
+                holder.timeLineView.setRadius(8);
+            }
         }
     }
 
@@ -118,6 +118,12 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
             timeLineView = (TimeLineView) itemView.findViewById(R.id.tlv_view);
             tv_name = (TextView) itemView.findViewById(R.id.tv_names);
             iv_image = (ImageView) itemView.findViewById(R.id.iv_image);
+
+            timeLineView.setCenterType(TimeLineView.CENTERTYPE.OTHER).setCenterBmp(R.mipmap.icon_center).setLineColor(Color.BLACK).setLineWidth(5);
+            timeLineView.setMarginTop(25);
+            tv_name.setTextColor(Color.BLACK);
+            iv_image.setImageResource(R.mipmap.poison);
+
         }
     }
 }

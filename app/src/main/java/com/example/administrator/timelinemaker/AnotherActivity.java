@@ -1,6 +1,5 @@
 package com.example.administrator.timelinemaker;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,14 +9,18 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
-import adapter.TimeLineAdapter;
+import adapter.AnotherAdapter;
 import view.TimeLineView;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by 黄艳武 on 2016/1/13.
+ * Function:
+ */
+public class AnotherActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ArrayList<String> dataList = new ArrayList<>();
-    private TimeLineAdapter adapter;
+    private AnotherAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         iniData();
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TimeLineAdapter(dataList, this);
+        adapter = new AnotherAdapter(dataList, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 adapter.setType(TimeLineView.CENTERTYPE.RINGCYCLE);
                 break;
             case R.id.menu_other:
-//                adapter.setType(TimeLineView.CENTERTYPE.OTHER);
+                adapter.setType(TimeLineView.CENTERTYPE.OTHER);
                 break;
             case R.id.menu_ring:
                 adapter.setType(TimeLineView.CENTERTYPE.RING);
@@ -66,9 +69,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_rondom:
                 adapter.setPositiontype(TimeLineView.POSITIONTYPE.RANDOM);
                 adapter.setMarginTop(15);
-                break;
-            case R.id.menu_another:
-                startActivity(new Intent(MainActivity.this, AnotherActivity.class));
                 break;
         }
         adapter.notifyDataSetChanged();

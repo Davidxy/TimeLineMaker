@@ -7,9 +7,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
-
-import com.example.administrator.timelinemaker.R;
 
 /**
  * Created by 洒笑天涯 on 2016/1/10.
@@ -46,7 +45,7 @@ public class TimeLineView extends View {
     /***
      * 中间需要绘制的东西的风格
      */
-    private int mCenterType = 2;
+    private int mCenterType;
     /***
      * 如果是圆环,就可以设置圆环的长度了
      */
@@ -67,6 +66,11 @@ public class TimeLineView extends View {
     //    private Drawable drawable;
     private Bitmap mCenterBmp;
 
+    /***
+     * @return
+     */
+    private int LineWidth = dip2px(1);
+
     public TimeLineView(Context context) {
         super(context, null);
     }
@@ -75,15 +79,23 @@ public class TimeLineView extends View {
     public TimeLineView(Context context, AttributeSet attrs) {
         super(context, attrs, 0);
         iniPaint();
-//        drawable = getResources().getDrawable(R.mipmap.ic_launcher);
-        mCenterBmp = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Log.v("myDestine","我被创建出来");
+
     }
 
     public TimeLineView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         iniPaint();
     }
-/*
+
+    /***
+     * @return 设置线条的颜色
+     */
+    public void setLineWidth(int lineWidth) {
+        LineWidth = dip2px(lineWidth);
+        linePaint.setStrokeWidth(lineWidth);
+    }
+        /*
     *//***
      * @param textSize 需要对其的TextView 的字体大小;主要是对了对其
      * @return 离顶部的高度,
@@ -149,14 +161,33 @@ public class TimeLineView extends View {
         public static final int OTHER = 4;
     }
 
+    /***
+     * @return 绘制图片的半径
+     */
+    public void setRadius(int radius) {
+        this.radius = dip2px(radius);
+    }
     /**
      * 进行画笔的初始化
      */
     private void iniPaint() {
         mainPaint = iniPainter();
         linePaint = iniPainter();
+        linePaint.setStyle(Paint.Style.FILL_AND_STROKE);
         mainPaint.setColor(mainColor);
         linePaint.setColor(mLineColor);
+    }
+
+    public TimeLineView setCenterBmp(Bitmap mCenterBmp) {
+        this.mCenterBmp = mCenterBmp;
+        radius = 0;
+        return this;
+    }
+
+    public TimeLineView setCenterBmp(int res) {
+        this.mCenterBmp = BitmapFactory.decodeResource(getResources(), res);
+        radius = 0;
+        return this;
     }
 
     /**
@@ -208,9 +239,19 @@ public class TimeLineView extends View {
         switch (mPositiontype) {
             case POSITIONTYPE.TOP:
                 beginLineHeight = endLineHeight = dip2px(1);//使隔开小小的空间,防止误差
+                if (CENTERTYPE.OTHER == mCenterType && mCenterBmp != null) {
+                    endLineHeight = endLineHeight + mCenterBmp.getHeight();
+                }
                 break;
             case POSITIONTYPE.CENTER:
-                beginLineHeight = endLineHeight = lineHeight;
+                beginLineHeight = endLineHeight = lineHeight;//居中
+                if (CENTERTYPE.OTHER == mCenterType) {//如果绘制的是图片,长短就应该根据图片的大小来计算
+                    if (mCenterBmp == null) return;
+                    beginLineHeight = (parentHeight - mCenterBmp.getHeight()) / 2;
+                    endLineHeight = parentHeight / 2 + mCenterBmp.getHeight() / 2;
+                    //如何是绘制图片的话,就不需要radius,这里置为0,否则会对其他造成影响
+                    radius = 0;
+                }
                 break;
             case POSITIONTYPE.BOTTOM:
                 beginLineHeight = lineHeight * 2;
@@ -218,6 +259,9 @@ public class TimeLineView extends View {
                 break;
             case POSITIONTYPE.RANDOM:
                 endLineHeight = beginLineHeight = dip2px(marginTop + 2) - margin;
+                if (CENTERTYPE.OTHER == mCenterType && mCenterBmp != null) {//距离顶部有多少距离
+                    endLineHeight = mCenterBmp.getHeight() + dip2px(marginTop);
+                }
                 break;
         }
         drawCenters(canvas, parentHeight, parentWidth);
@@ -229,6 +273,7 @@ public class TimeLineView extends View {
     private void drawCenters(Canvas canvas, int parentHeight, int parentWidth) {
         switch (mCenterType) {
             case CENTERTYPE.CYCLE:
+                Log.v("myDestine","为什么不执行我设置的呢?");
                 drawCycle(canvas, parentHeight, parentWidth);
                 break;
             case CENTERTYPE.RING:
@@ -241,25 +286,24 @@ public class TimeLineView extends View {
                 drawTwoRing(canvas, parentHeight, parentWidth);
                 break;
             case CENTERTYPE.OTHER:
+                Log.v("myDestine","我在这里画画");
                 drawDrawable(canvas, parentHeight, parentWidth);
                 break;
         }
     }
 
     /***
-     * @return 绘制的是图片的话
+     * @return 绘制的是图片的话;绘制图片的时候,只有居中的这一种情况是没有问题的;现在解决
      */
     private void drawDrawable(Canvas canvas, int parentHeight, int parentWidth) {
-        if (mCenterBmp == null) return;
-        beginLineHeight = (parentHeight - mCenterBmp.getHeight()) / 2;
-        endLineHeight = beginLineHeight + mCenterBmp.getHeight();
-      /*
-        canvas.save();
-        canvas.translate(parentWidth/2,beginLineHeight+margin);
-        drawable.draw(canvas);
-        canvas.restore();*/
+
         drawLine(canvas, parentHeight, parentWidth);
-        canvas.drawBitmap(mCenterBmp, parentWidth / 2 - mCenterBmp.getWidth()/2, beginLineHeight + margin, mainPaint);
+        canvas.drawBitmap(mCenterBmp, parentWidth / 2 - mCenterBmp.getWidth() / 2, beginLineHeight, mainPaint);
+    }
+
+    public void setStrokeWidth(int strokeWidth) {
+        this.strokeWidth = dip2px(strokeWidth);
+        mainPaint.setStrokeWidth(this.strokeWidth);
     }
 
     /****
