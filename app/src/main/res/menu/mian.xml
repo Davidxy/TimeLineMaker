@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_cycle"
+        android:title="CYCLE"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_ring"
+        android:title="RING"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_two_ring"
+        android:title="TWO_RING"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_cycle_ring"
+        android:title="CYCLE_RING"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_other"
+        android:title="OTHER"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_top"
+        android:title="TOP"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_center"
+        android:title="CENTER"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_bottom"
+        android:title="BOTTOM"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_rondom"
+        android:title="RANDOM(15DP)"
+        app:showAsAction="never" />
+
+</menu>
